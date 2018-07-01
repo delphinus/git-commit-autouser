@@ -2,9 +2,10 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
-	"os"
 	"os/exec"
+	"os/user"
 	"regexp"
 )
 
@@ -17,7 +18,6 @@ var (
 	origin = []byte("origin")
 	prefix = []byte(gitConfigPrefix)
 	tilde  = []byte{'~'}
-	home   = []byte(os.Getenv("HOME"))
 )
 
 // User has config for several domains
@@ -45,7 +45,10 @@ func (u *User) setFromConfig(line []byte) (err error) {
 	case bytes.Equal(key, []byte("email")):
 		u.Email = val
 	case bytes.Equal(key, []byte("hub-config")):
-		u.HubConfig = replaceTilde(val)
+		u.HubConfig, err = replaceTilde(val)
+		if err != nil {
+			return fmt.Errorf("error in replacing tilde: %v", err)
+		}
 	}
 	return nil
 }
@@ -81,9 +84,13 @@ func configUsers() (Users, error) {
 	return users, nil
 }
 
-func replaceTilde(path []byte) []byte {
+func replaceTilde(path []byte) ([]byte, error) {
 	if !bytes.HasPrefix(path, tilde) {
-		return path
+		return path, nil
 	}
-	return bytes.Replace(path, tilde, home, 1)
+	u, err := user.Current()
+	if err != nil {
+		return nil, errors.New("cannot get the current user")
+	}
+	return bytes.Replace(path, tilde, []byte(u.HomeDir), 1), nil
 }
