@@ -26,7 +26,7 @@ type User struct {
 	URLRegexp              *regexp.Regexp
 }
 
-func (u *User) setFromConfig(line []byte) error {
+func (u *User) setFromConfig(line []byte) (err error) {
 	kv := bytes.SplitN(line, []byte{' '}, 2)
 	if len(kv) != 2 {
 		return fmt.Errorf("invalid config from git: %s", line)
@@ -36,11 +36,10 @@ func (u *User) setFromConfig(line []byte) error {
 	nameKey := bytes.SplitN(fullKeyName, []byte{'.'}, 2)
 	switch key := nameKey[1]; {
 	case bytes.Equal(key, []byte("url-regexp")):
-		re, err := regexp.Compile(string(key))
+		u.URLRegexp, err = regexp.Compile(string(val))
 		if err != nil {
 			return fmt.Errorf("error in regexp in %s: %v", key, err)
 		}
-		u.URLRegexp = re
 	case bytes.Equal(key, []byte("name")):
 		u.Name = val
 	case bytes.Equal(key, []byte("email")):
