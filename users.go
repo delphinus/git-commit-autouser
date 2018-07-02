@@ -51,7 +51,9 @@ func originRemoteURL() ([]byte, error) {
 			break
 		}
 	}
-	if bytes.Equal(url, origin) {
+	if url == nil {
+		return nil, errors.New("invalid output from git remote")
+	} else if bytes.Equal(url, origin) {
 		return nil, ErrNotSetOrigin{}
 	}
 	return url, nil
