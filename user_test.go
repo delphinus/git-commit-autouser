@@ -10,8 +10,9 @@ import (
 )
 
 func TestSetFromConfig(t *testing.T) {
+	a := assert.New(t)
 	u, err := user.Current()
-	assert.NoError(t, err)
+	a.NoError(err)
 	for _, c := range []struct {
 		name      string
 		line      string
@@ -55,7 +56,6 @@ func TestSetFromConfig(t *testing.T) {
 		},
 	} {
 		t.Run(c.name, func(t *testing.T) {
-			a := assert.New(t)
 			u := User{}
 			err := u.setFromConfig([]byte(c.line))
 			if c.errPrefix == "" {
