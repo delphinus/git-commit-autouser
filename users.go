@@ -2,12 +2,24 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"os/exec"
 )
 
+type outputter interface {
+	Output() ([]byte, error)
+}
+
 var (
 	pushURLPrefix = []byte("  Push  URL: ")
+	execCommand   func(string, ...string) outputter
 )
+
+func init() {
+	execCommand = func(name string, args ...string) outputter {
+		return exec.Command(name, args...)
+	}
+}
 
 // Users is a bunch of User
 type Users []User
@@ -27,7 +39,7 @@ func (us Users) Env() ([]string, error) {
 }
 
 func originRemoteURL() ([]byte, error) {
-	cmd := exec.Command("git", "remote", "show", "-n", string(origin))
+	cmd := execCommand("git", "remote", "show", "-n", string(origin))
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err
