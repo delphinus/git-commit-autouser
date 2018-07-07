@@ -49,6 +49,7 @@ func run(env []string) error {
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
-	cmd.Env = env
+	envs := append(os.Environ(), env...)
+	cmd.Env = envs
 	return cmd.Run()
 }
