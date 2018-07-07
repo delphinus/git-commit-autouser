@@ -5,6 +5,7 @@ help:
 
 COMMIT := $(shell git describe --always)
 VERSION := $(shell cat version.go | perl -ne 'print "v$$1" if /Version = "(.+?)"/')
+DIR := pkg/$(VERSION)
 
 .PHONY: install
 install: ## install dependencies
@@ -14,5 +15,6 @@ install: ## install dependencies
 
 .PHONY: release
 release: ## release binaries at GitHub (NOTE: update verion.go & the tag before this)
-	gox -os 'darwin linux windows' -arch '386 amd64' -ldflags '-X main.GitCommit=$(COMMIT)' -output 'pkg/$(VERSION)/{{.Dir}}_{{.OS}}_{{.Arch}}'
-	ghr -u delphinus $(VERSION) pkg/$(VERSION)
+	gox -os 'darwin linux windows' -arch '386 amd64' -ldflags '-X main.GitCommit=$(COMMIT)' -output '$(DIR)/{{.Dir}}_{{.OS}}_{{.Arch}}'
+	bin/zip-binaries $(DIR)
+	ghr -u delphinus $(VERSION) $(DIR)

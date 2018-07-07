@@ -1,0 +1,10 @@
+#!/bin/bash -eu
+TARGET="$1"
+if [[ ! -d $TARGET ]]; then
+    echo "directory does not exist: $TARGET"
+    exit 1
+fi
+find "$TARGET" -maxdepth 1 -type f | while read -r i; do
+    zip "$i.zip" "$i"
+    rm "$i"
+done
