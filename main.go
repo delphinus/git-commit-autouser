@@ -1,12 +1,19 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
 )
 
+var (
+	nocolor bool
+)
+
 func main() {
+	flag.BoolVar(&nocolor, "nocolor", false, "show output without color")
+	flag.Parse()
 	if err := process(); err != nil {
 		if m, ok := err.(ErrorMessager); ok {
 			fmt.Fprintf(os.Stderr, m.ErrorMessage())
@@ -33,7 +40,12 @@ func process() error {
 }
 
 func run(env []string) error {
-	cmd := exec.Command("git", "commit")
+	var args []string
+	if !nocolor {
+		args = []string{"-c", "color.status=always"}
+	}
+	args = append(args, "commit")
+	cmd := exec.Command("git", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
