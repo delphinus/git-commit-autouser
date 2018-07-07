@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"os/exec"
 	"os/user"
 	"regexp"
 )
@@ -65,7 +64,7 @@ func (u *User) Env() []string {
 }
 
 func configUsers() (Users, error) {
-	cmd := exec.Command("git", "config", "--get-regexp", gitConfigRegexp)
+	cmd := execCommand("git", "config", "--get-regexp", gitConfigRegexp)
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err
