@@ -4,7 +4,7 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 COMMIT := $(shell git describe --always)
-VERSION := $(shell cat version.go | perl -ne 'print $$1 if /Version = "(.+?)"/')
+VERSION := $(shell cat version.go | perl -ne 'print "v$$1" if /Version = "(.+?)"/')
 
 .PHONY: install
 install: ## install dependencies
