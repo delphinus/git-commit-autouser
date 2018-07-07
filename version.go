@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/blang/semver"
 	"github.com/rhysd/go-github-selfupdate/selfupdate"
@@ -26,4 +27,8 @@ func doSelfupdate() error {
 		fmt.Println("release note:\n", latest.ReleaseNotes)
 	}
 	return nil
+}
+
+func showVersion() {
+	fmt.Printf("%s %s (%s)\n", os.Args[0], Version, GitCommit)
 }

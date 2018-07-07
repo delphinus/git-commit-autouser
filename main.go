@@ -8,12 +8,14 @@ import (
 )
 
 var (
-	flagNocolor, flagSelfupdate bool
+	flagNocolor, flagSelfupdate, flagVersion bool
 )
 
 func main() {
 	flag.BoolVar(&flagNocolor, "nocolor", false, "show output without color")
 	flag.BoolVar(&flagSelfupdate, "selfupdate", false, "self-update the binary")
+	flag.BoolVar(&flagVersion, "version", false, "show the version")
+	flag.BoolVar(&flagVersion, "v", false, "show the version (shorthand)")
 	flag.Parse()
 	if err := process(); err != nil {
 		if m, ok := err.(ErrorMessager); ok {
@@ -29,6 +31,10 @@ func process() error {
 		if err := doSelfupdate(); err != nil {
 			return err
 		}
+		return nil
+	}
+	if flagVersion {
+		showVersion()
 		return nil
 	}
 	users, err := configUsers()
