@@ -25,15 +25,8 @@ type User struct {
 	URLRegexp              *regexp.Regexp
 }
 
-func (u *User) setFromConfig(line []byte) (err error) {
-	kv := bytes.SplitN(line, []byte{' '}, 2)
-	if len(kv) != 2 {
-		return fmt.Errorf("invalid config from git: %s", line)
-	}
-	fullKeyName := bytes.TrimPrefix(kv[0], prefix)
-	val := kv[1]
-	nameKey := bytes.SplitN(fullKeyName, []byte{'.'}, 2)
-	switch key := nameKey[1]; {
+func (u *User) setFromConfig(key, val []byte) (err error) {
+	switch {
 	case bytes.Equal(key, []byte("url-regexp")):
 		u.URLRegexp, err = regexp.Compile(string(val))
 		if err != nil {
@@ -69,13 +62,19 @@ func configUsers() (Users, error) {
 	if err != nil {
 		return nil, err
 	}
-	var users Users
+	users := Users{}
 	for _, line := range bytes.Split(out, []byte{'\n'}) {
-		u := User{}
-		if err := u.setFromConfig(line); err != nil {
+		kv := bytes.SplitN(line, []byte{' '}, 2)
+		if len(kv) != 2 {
+			return nil, fmt.Errorf("invalid config from git: %s", line)
+		}
+		fullKeyName := bytes.TrimPrefix(kv[0], prefix)
+		val := kv[1]
+		nameKey := bytes.SplitN(fullKeyName, []byte{'.'}, 2)
+		u := users.User(nameKey[0])
+		if err := u.setFromConfig(nameKey[1], val); err != nil {
 			return nil, err
 		}
-		users = append(users, u)
 	}
 	if len(users) == 0 {
 		return nil, ErrShowInstruction{}
