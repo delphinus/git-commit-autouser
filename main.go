@@ -34,6 +34,9 @@ func process() error {
 
 func run(env []string) error {
 	cmd := exec.Command("git", "commit")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	cmd.Env = env
 	return cmd.Run()
 }
