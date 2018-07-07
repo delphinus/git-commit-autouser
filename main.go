@@ -28,14 +28,10 @@ func main() {
 
 func process() error {
 	if flagSelfupdate {
-		if err := doSelfupdate(); err != nil {
-			return err
-		}
-		return nil
+		return doSelfupdate()
 	}
 	if flagVersion {
-		showVersion()
-		return nil
+		return showVersion()
 	}
 	users, err := configUsers()
 	if err != nil {

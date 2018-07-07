@@ -29,6 +29,7 @@ func doSelfupdate() error {
 	return nil
 }
 
-func showVersion() {
+func showVersion() error {
 	fmt.Printf("%s %s (%s)\n", os.Args[0], Version, GitCommit)
+	return nil
 }
