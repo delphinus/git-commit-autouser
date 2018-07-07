@@ -9,7 +9,7 @@ import (
 )
 
 // Version is needed for ggallin
-const Version = "1.2.7"
+const Version = "1.2.8"
 
 // GitCommit is needed for ggallin
 var GitCommit = ""
