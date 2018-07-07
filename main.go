@@ -45,7 +45,7 @@ func process() error {
 		}
 		fmt.Fprintf(os.Stderr, "[warning]: %s\n", w.WarningMessage())
 	}
-	fmt.Printf("user: %s", info)
+	fmt.Printf("user: %s\n", info)
 	return run(env)
 }
 
