@@ -8,11 +8,11 @@ import (
 )
 
 var (
-	nocolor bool
+	flagNocolor bool
 )
 
 func main() {
-	flag.BoolVar(&nocolor, "nocolor", false, "show output without color")
+	flag.BoolVar(&flagNocolor, "nocolor", false, "show output without color")
 	flag.Parse()
 	if err := process(); err != nil {
 		if m, ok := err.(ErrorMessager); ok {
@@ -41,7 +41,7 @@ func process() error {
 
 func run(env []string) error {
 	var args []string
-	if !nocolor {
+	if !flagNocolor {
 		args = []string{"-c", "color.status=always"}
 	}
 	args = append(args, "commit")
