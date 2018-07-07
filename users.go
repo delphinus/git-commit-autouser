@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"os/exec"
 )
 
 type outputter interface {
@@ -12,14 +11,7 @@ type outputter interface {
 
 var (
 	pushURLPrefix = []byte("  Push  URL: ")
-	execCommand   func(string, ...string) outputter
 )
-
-func init() {
-	execCommand = func(name string, args ...string) outputter {
-		return exec.Command(name, args...)
-	}
-}
 
 // Users is a bunch of User
 type Users []User

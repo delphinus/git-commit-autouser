@@ -8,21 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	outBytes []byte
-	outErr   error
-)
-
-type testOutputter struct{}
-
-func (testOutputter) Output() ([]byte, error) {
-	return outBytes, outErr
-}
-
 func TestOriginRemoteURL(t *testing.T) {
-	execCommand = func(_ string, _ ...string) outputter {
-		return testOutputter{}
-	}
 	a := assert.New(t)
 	for _, c := range []struct {
 		name        string
@@ -71,8 +57,7 @@ func TestOriginRemoteURL(t *testing.T) {
 		},
 	} {
 		t.Run(c.name, func(t *testing.T) {
-			outBytes = c.outBytes
-			outErr = c.outErr
+			defer ReplaceExecCommand(c.outBytes, c.outErr)()
 			url, err := originRemoteURL()
 			if c.expectedErr != "" {
 				a.EqualError(err, c.expectedErr)
@@ -86,9 +71,6 @@ func TestOriginRemoteURL(t *testing.T) {
 
 func TestEnv(t *testing.T) {
 	a := assert.New(t)
-	execCommand = func(_ string, _ ...string) outputter {
-		return testOutputter{}
-	}
 	re, err := regexp.Compile(`ghe\.example\.com`)
 	a.NoError(err)
 	us := Users{
@@ -146,8 +128,7 @@ func TestEnv(t *testing.T) {
 		},
 	} {
 		t.Run(c.name, func(t *testing.T) {
-			outBytes = c.outBytes
-			outErr = c.outErr
+			defer ReplaceExecCommand(c.outBytes, c.outErr)()
 			env, err := us.Env()
 			if c.expectedErr != "" {
 				a.EqualError(err, c.expectedErr)
