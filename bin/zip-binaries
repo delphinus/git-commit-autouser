@@ -5,9 +5,8 @@ if [[ ! -d $TARGET ]]; then
     exit 1
 fi
 cd "$TARGET"
-find . -maxdepth 1 -type f | while read -r i; do
-    progname=$(echo -n "$i" | sed -e 's/_.*//')
-    mv "$i" "$progname"
-    zip "$i.zip" "$progname"
-    rm "$progname"
+find . -maxdepth 2 -type f | while read -r i; do
+    zipname=$(basename "$(dirname "$i")")
+    zip -j "$zipname" "$i"
+    rm -r "$zipname"
 done

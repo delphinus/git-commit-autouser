@@ -15,6 +15,6 @@ install: ## install dependencies
 
 .PHONY: release
 release: ## release binaries at GitHub (NOTE: update verion.go & the tag before this)
-	gox -os 'darwin linux windows' -arch '386 amd64' -ldflags '-X main.GitCommit=$(COMMIT)' -output '$(DIR)/{{.Dir}}_{{.OS}}_{{.Arch}}'
+	gox -os 'darwin linux windows' -arch '386 amd64' -ldflags '-X main.GitCommit=$(COMMIT)' -output '$(DIR)/{{.Dir}}_{{.OS}}_{{.Arch}}/{{.Dir}}'
 	bin/zip-binaries $(DIR)
 	ghr -u delphinus $(VERSION) $(DIR)
