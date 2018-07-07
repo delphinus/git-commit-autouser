@@ -129,7 +129,7 @@ func TestEnv(t *testing.T) {
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			defer ReplaceExecCommand(c.outBytes, c.outErr)()
-			env, err := us.Env()
+			env, _, err := us.Env()
 			if c.expectedErr != "" {
 				a.EqualError(err, c.expectedErr)
 				return

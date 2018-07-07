@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"errors"
+	"fmt"
 )
 
 type outputter interface {
@@ -17,17 +18,17 @@ var (
 type Users map[string]*User
 
 // Env returns env setting for users
-func (us Users) Env() ([]string, error) {
+func (us Users) Env() ([]string, string, error) {
 	url, err := originRemoteURL()
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 	for _, u := range us {
 		if u.URLRegexp.Match(url) {
-			return u.Env(), nil
+			return u.Env(), fmt.Sprintf("%s <%s>", u.Name, u.Email), nil
 		}
 	}
-	return nil, ErrNotMatch{url}
+	return nil, "", ErrNotMatch{url}
 }
 
 // User returns the user with supplied name

@@ -37,7 +37,7 @@ func process() error {
 	if err != nil {
 		return err
 	}
-	env, err := users.Env()
+	env, info, err := users.Env()
 	if err != nil {
 		w, ok := err.(WarningMessager)
 		if !ok {
@@ -45,6 +45,7 @@ func process() error {
 		}
 		fmt.Fprintf(os.Stderr, "[warning]: %s\n", w.WarningMessage())
 	}
+	fmt.Printf("user: %s", info)
 	return run(env)
 }
 
