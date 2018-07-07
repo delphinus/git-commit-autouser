@@ -8,11 +8,12 @@ import (
 )
 
 var (
-	flagNocolor bool
+	flagNocolor, flagSelfupdate bool
 )
 
 func main() {
 	flag.BoolVar(&flagNocolor, "nocolor", false, "show output without color")
+	flag.BoolVar(&flagSelfupdate, "selfupdate", false, "self-update the binary")
 	flag.Parse()
 	if err := process(); err != nil {
 		if m, ok := err.(ErrorMessager); ok {
@@ -24,6 +25,12 @@ func main() {
 }
 
 func process() error {
+	if flagSelfupdate {
+		if err := doSelfupdate(); err != nil {
+			return err
+		}
+		return nil
+	}
 	users, err := configUsers()
 	if err != nil {
 		return err
