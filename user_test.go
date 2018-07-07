@@ -80,7 +80,13 @@ func TestConfigUsers(t *testing.T) {
 		users     Users
 	}{
 		{
+			name:      "if command output none, show instruction",
+			outErr:    errors.New("dummy error"),
+			errPrefix: "show instruction",
+		},
+		{
 			name:      "if command error, return error",
+			outBytes:  []byte(`dummy`),
 			outErr:    errors.New("hoge"),
 			errPrefix: "hoge",
 		},

@@ -59,7 +59,9 @@ func (u *User) Env() []string {
 func configUsers() (Users, error) {
 	cmd := execCommand("git", "config", "--get-regexp", gitConfigRegexp)
 	out, err := cmd.Output()
-	if err != nil {
+	if len(out) == 0 {
+		return nil, ErrShowInstruction{}
+	} else if err != nil {
 		return nil, err
 	}
 	users := Users{}
