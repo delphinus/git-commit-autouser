@@ -74,7 +74,7 @@ func TestEnv(t *testing.T) {
 	re, err := regexp.Compile(`ghe\.example\.com`)
 	a.NoError(err)
 	us := Users{
-		"ghe": User{
+		"ghe": &User{
 			Name:      []byte(`Foo Bar`),
 			Email:     []byte(`foo@example.com`),
 			URLRegexp: re,

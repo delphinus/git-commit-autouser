@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"os/user"
 	"regexp"
 	"strings"
@@ -66,6 +67,62 @@ func TestSetFromConfig(t *testing.T) {
 				a.Error(err)
 				a.True(strings.HasPrefix(err.Error(), c.errPrefix))
 			}
+		})
+	}
+}
+
+func TestConfigUsers(t *testing.T) {
+	for _, c := range []struct {
+		name      string
+		outBytes  []byte
+		outErr    error
+		errPrefix string
+		users     Users
+	}{
+		{
+			name:      "if command error, return error",
+			outErr:    errors.New("hoge"),
+			errPrefix: "hoge",
+		},
+		{
+			name:      "if no error but invalid config, return error",
+			outBytes:  []byte(`hogehoge`),
+			errPrefix: "invalid config from git",
+		},
+		{
+			name:      "if no error but no line, show instruction",
+			errPrefix: "show instruction",
+		},
+		{
+			name: "if no error and valid output, return valid users",
+			outBytes: []byte(`autouser-ghe.url-regexp git\.example\.com
+autouser-ghe.name Foo Bar
+autouser-gitlab.url-regexp gitlab\.com
+autouser-gitlab.name Bar Foo
+`),
+			users: Users{
+				"ghe": {
+					Name:      []byte("Foo Bar"),
+					URLRegexp: regexp.MustCompile(`git\.example\.com`),
+				},
+				"gitlab": {
+					Name:      []byte("Bar Foo"),
+					URLRegexp: regexp.MustCompile(`gitlab\.com`),
+				},
+			},
+		},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			a := assert.New(t)
+			defer ReplaceExecCommand(c.outBytes, c.outErr)()
+			users, err := configUsers()
+			if c.errPrefix != "" {
+				a.Error(err)
+				a.True(strings.HasPrefix(err.Error(), c.errPrefix))
+				return
+			}
+			a.NoError(err)
+			a.Equal(c.users, users)
 		})
 	}
 }

@@ -14,7 +14,7 @@ var (
 )
 
 // Users is a bunch of User
-type Users map[string]User
+type Users map[string]*User
 
 // Env returns env setting for users
 func (us Users) Env() ([]string, error) {
@@ -31,12 +31,12 @@ func (us Users) Env() ([]string, error) {
 }
 
 // User returns the user with supplied name
-func (us Users) User(name []byte) User {
+func (us Users) User(name []byte) *User {
 	key := string(name)
 	if u, ok := us[key]; ok {
 		return u
 	}
-	us[key] = User{}
+	us[key] = &User{}
 	return us[key]
 }
 

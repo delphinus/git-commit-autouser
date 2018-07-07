@@ -64,6 +64,9 @@ func configUsers() (Users, error) {
 	}
 	users := Users{}
 	for _, line := range bytes.Split(out, []byte{'\n'}) {
+		if len(line) == 0 {
+			continue
+		}
 		kv := bytes.SplitN(line, []byte{' '}, 2)
 		if len(kv) != 2 {
 			return nil, fmt.Errorf("invalid config from git: %s", line)
