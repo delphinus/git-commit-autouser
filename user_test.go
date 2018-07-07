@@ -42,17 +42,17 @@ func TestSetFromConfig(t *testing.T) {
 		{
 			name: "valid email",
 			line: `autouser-ghe.email foo@example.com`,
-			want: User{Name: []byte(`foo@example.com`)},
+			want: User{Email: []byte(`foo@example.com`)},
 		},
 		{
 			name: "valid email",
 			line: `autouser-ghe.email foo@example.com`,
-			want: User{Name: []byte(`foo@example.com`)},
+			want: User{Email: []byte(`foo@example.com`)},
 		},
 		{
 			name: "valid hub-config",
 			line: `autouser-ghe.hub-config ~/.config/hub`,
-			want: User{Name: []byte(u.HomeDir + `/.config/hub`)},
+			want: User{HubConfig: []byte(u.HomeDir + `/.config/hub`)},
 		},
 	} {
 		t.Run(c.name, func(t *testing.T) {
@@ -60,6 +60,7 @@ func TestSetFromConfig(t *testing.T) {
 			err := u.setFromConfig([]byte(c.line))
 			if c.errPrefix == "" {
 				a.NoError(err)
+				a.Equal(c.want, u)
 			} else {
 				a.Error(err)
 				a.True(strings.HasPrefix(err.Error(), c.errPrefix))
