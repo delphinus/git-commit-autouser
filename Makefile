@@ -9,7 +9,7 @@ DIR := pkg/$(VERSION)
 
 .PHONY: install
 install: ## install dependencies
-	go get -u github.com/rhysd/go-github-selfupdate
+	go get -u github.com/rhysd/go-github-selfupdate/selfupdate
 	go get -u github.com/tcnksm/ghr
 	go get -u github.com/mitchellh/gox
 
